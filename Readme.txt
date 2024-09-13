@@ -2,8 +2,38 @@
 自适应外部父控件大小和图片大小：
 	要自适应外部父控件大小和图片大小，需要在在外部，也就是放置ScrollPictureBox的窗体(Form)里让ScrollPictureBox的Size=父控件（假设是panel）要用AdjustScrollPictureboxSize（）
 	我已经封装了private void AdjustScrollPictureboxSize(Bitmap bitmap)函数,代码放在ScrollPictureBox.cs的开头说明里，
-	！！！特别需要注意的：（1）AdjustScrollPictureboxSize函数需要读取一个全局变量Size panel2OriginalSize = new System.Drawing.Size(1153, 533);这个Size需要自己指定。
-				      （2）给放置他的父容器设置边框，因为ScrollPictureBox在加载图片前是不可见的。this.panel.BorderStyle=Fixed3D;
+	！！！特别需要注意的：
+	（1）AdjustScrollPictureboxSize函数需要读取一个全局变量Size panel2OriginalSize = new System.Drawing.Size(1153, 533);这个Size需要自己指定。
+	（2）给放置他的父容器设置边框，因为ScrollPictureBox在加载图片前是不可见的。this.panel.BorderStyle=Fixed3D;
+
+Size panel2OriginalSize = new System.Drawing.Size(1153, 533);
+private void AdjustScrollPictureboxSize(Bitmap bitmap)
+        {
+            //避免跨线程调用
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<Bitmap>(AdjustScrollPictureboxSize), bitmap);
+                return;
+            }
+
+            // 固定 panel2 的尺寸
+            this.panel2.Size = panel2OriginalSize;
+
+            if (bitmap.Width > panel2.Size.Width || bitmap.Height > panel2.Size.Height)
+            {
+                this.scrollPicturebox1.Visible = true;
+                this.scrollPicturebox1.Size = new Size(panel2.Size.Width, panel2.Size.Height);
+            }
+            else
+            {
+                this.scrollPicturebox1.Visible = true;
+                this.scrollPicturebox1.Size = new Size(bitmap.Width, bitmap.Height);
+            }
+
+            
+        }
+
+
 	
 SetLabelLongPressHandler(Label label, LabelLongPressEventHandler handler)
 设置标签的长按事件处理程序。
